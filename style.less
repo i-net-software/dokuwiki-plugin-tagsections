@@ -1,0 +1,48 @@
+div.sectiontag {
+    position: absolute;
+    left: 0px;
+    
+    .sectiontag__form {
+        
+        left: 100%;
+        margin-left: -150%;
+        
+        .sectiontag_button {
+            text-indent: -999px;
+            border: 0px;
+            
+            background-color: transparent;
+            background-image: url(images/sectiontag.png);
+            width: 20px;
+            height: 20px;
+            
+            &:hover, &:active {
+                background-color: @ini_highlight;
+            }
+        }        
+    }
+}
+
+div.tagsections__accordeon {
+
+    label {
+        float: right;
+        display: inline-block;
+        width: 100%;
+        
+        &:after {
+            display: inline-block;
+            content: '';
+            clear: both;
+        }
+        
+        &:hover {
+            background-color: @ini_highlight;
+        }
+    }
+    
+    input {
+        margin: 5px;
+        float: left;
+    }
+}
