@@ -33,9 +33,9 @@
         jQuery.each(data.availableTags, function(namespace, entries){
             // namespaces
             
-            jQuery('<h3/>').text((namespace + ' ' + 'x/x').trim() ).appendTo($accordeon);
-            var $accordeonContent = jQuery('<div/>').appendTo($accordeon);
+            var $accordeonContent = jQuery('<div/>');
             
+            var checked = 0;
             jQuery.each(entries, function(tag){
                 
                 var tagName = namespace.length > 0 ? namespace+':'+tag : tag;
@@ -46,8 +46,12 @@
                      typeof data.tagsForSection[namespace] != 'undefined' &&
                      typeof data.tagsForSection[namespace][tag] != 'undefined' ) {
                     $element.prop( "checked", true );
+                    checked++;
                 }
             });
+
+            jQuery('<h3/>').text((namespace + ' ' + checked + '/'+Object.keys(entries).length).trim() ).appendTo($accordeon);
+            $accordeonContent.appendTo($accordeon);
         });
         
         $accordeon.accordion({heightStyle: 'content',collapsible:true});
