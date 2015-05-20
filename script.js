@@ -30,32 +30,72 @@
         var $accordeon = jQuery('<div class="tagsections__accordeon"/>').appendTo($dialog);
         data.availableTags = jQuery.extend( true, data.availableTags, data.tagsForSection);
         
+        if ( typeof data.availableTags[''] == 'undefined' ) {
+            data.availableTags[''] = {};
+        }
+        
+        var needsEmptySection = true;
         jQuery.each(data.availableTags, function(namespace, entries){
             // namespaces
             
             var $accordeonContent = jQuery('<div/>');
             
+            didAddRows = true;
             var checked = 0;
             jQuery.each(entries, function(tag){
                 
-                var tagName = namespace.length > 0 ? namespace+':'+tag : tag;
-                var $element = jQuery('<input type="checkbox" class="tagsections__tag"/>').attr('name', tagName).val('1').attr('id', tagName);
-                jQuery('<label/>').attr('for', tagName).text(tag).append($element).appendTo($accordeonContent);
-                
-                if ( typeof data.tagsForSection != 'undefined' &&
-                     typeof data.tagsForSection[namespace] != 'undefined' &&
-                     typeof data.tagsForSection[namespace][tag] != 'undefined' ) {
-                    $element.prop( "checked", true );
-                    checked++;
-                }
+                var check =     typeof data.tagsForSection != 'undefined' &&
+                                typeof data.tagsForSection[namespace] != 'undefined' &&
+                                typeof data.tagsForSection[namespace][tag] != 'undefined';
+                creeateCheckBox(namespace, tag, check).appendTo($accordeonContent)
+                checked += check ? 1 : 0;
             });
-
-            jQuery('<h3/>').text((namespace + ' ' + checked + '/'+Object.keys(entries).length).trim() ).appendTo($accordeon);
+            
+            // Add an input box to add new tags
+            additionalRows(namespace, $accordeonContent);
+            
+            // Add new accordeon entry
+            $accordeon.append(createHeader(namespace, checked, Object.keys(entries).length));
             $accordeonContent.appendTo($accordeon);
         });
         
+        if ( !didAddRows ) {
+            $accordeon.append(createHeader(null, 0, 0));
+
+            var $content = jQuery('<div/>').appendTo($accordeon);
+            additionalRows(null, $content);
+        }
+        
         $accordeon.accordion({heightStyle: 'content',collapsible:true});
     };
+    
+    var createHeader = function(namespace, checked, entries) {
+        return jQuery('<h3/>').text(((namespace||LANG.plugins.tagsections['empty namespace']) + ' ' + checked + '/'+entries).trim() );
+    }
+    
+    var creeateCheckBox = function(namespace, tag, checked) {
+        var tagName = (namespace||'').length > 0 ? namespace+':'+tag : tag;
+        var $element = jQuery('<input type="checkbox" class="tagsections__tag"/>').attr('name', tagName).val('1').attr('id', tagName).prop('checked', checked);
+        return jQuery('<label/>').attr('for', tagName).text(tag).append($element);
+    }
+    
+    var additionalRows = function(namespace, $root) {
+        
+        var $newTagLine = jQuery('<hr/>').appendTo($root);
+        var $element = jQuery('<input class="tagsections__tag__new"/>').attr('id', namespace + '_newTag');
+        var $button  = jQuery('<input class="edit" type="submit"/>').val(LANG.plugins.tagsections['add']);
+        var $form    = jQuery('<form/>').append($element).append($button);
+        jQuery('<label class="newTag"/>').attr('for', namespace + '_newTag').text(LANG.plugins.tagsections['new tag']).append($form).appendTo($root);
+        
+        $form.submit(function(){
+            
+            var tag = $element.val();
+            $newTagLine.before(creeateCheckBox(namespace, tag, true));
+            $element.val('');
+
+            return false;
+        });
+    }
     
     var request = function(data, success) {
         data['call'] = 'tagsections';

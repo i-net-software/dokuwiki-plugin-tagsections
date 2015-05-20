@@ -29,6 +29,7 @@ div.tagsections__accordeon {
         float: right;
         display: inline-block;
         width: 100%;
+        padding: 0px 5px;
         
         &:after {
             display: inline-block;
@@ -41,8 +42,12 @@ div.tagsections__accordeon {
         }
     }
     
-    input {
+    input[type='checkbox'] {
         margin: 5px;
         float: left;
+    }
+    
+    input.tagsections__tag__new {
+        margin: 0px 10px;
     }
 }
