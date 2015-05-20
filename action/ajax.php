@@ -61,7 +61,8 @@ class action_plugin_tagsections_ajax extends DokuWiki_Action_Plugin {
         }
         
         if ( $INPUT->has('availableTags') ) {
-            $availableTags = $filter->getTagsByNamespace($ns);
+            // Lets just use all tags for now.
+            $availableTags = $filter->getTagsByNamespace('');
             $result['availableTags'] = $this->__categorysizeTags($availableTags);
         }
         
@@ -124,8 +125,8 @@ class action_plugin_tagsections_ajax extends DokuWiki_Action_Plugin {
             }
         }
     
-        return $data;
-        // return html_buildlist($data,'idx','media_nstree_item','media_nstree_li');
+        // return $data;
+        return html_buildlist($data,'idx','media_nstree_item','media_nstree_li');
     }
     
     private function __saveTags($tags, $RANGE) {

@@ -15,7 +15,13 @@
             jQuery('form.sectiontag__form').submit(function(event){
                 
                 $currentButton = jQuery(this);
+/*
+                request({listOfPages: true}, function(data) {
+                    console.log(JSON.parse(data));
+                });
+/*/  
                 request({availableTags: true, tagsForSection: true}, showTagSelection);
+//*/
                 return false;
             });
         } else {
@@ -40,7 +46,7 @@
             
             var $accordeonContent = jQuery('<div/>');
             
-            didAddRows = true;
+            needsEmptySection = false;
             var checked = 0;
             jQuery.each(entries, function(tag){
                 
@@ -59,7 +65,7 @@
             $accordeonContent.appendTo($accordeon);
         });
         
-        if ( !didAddRows ) {
+        if ( needsEmptySection ) {
             $accordeon.append(createHeader(null, 0, 0));
 
             var $content = jQuery('<div/>').appendTo($accordeon);
