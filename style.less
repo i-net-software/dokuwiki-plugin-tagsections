@@ -51,3 +51,23 @@ div.tagsections__accordeon {
         margin: 0px 10px;
     }
 }
+
+.tagsections.header.tag {
+    font-size: small;
+    font-weight: normal;
+    margin: 0px 0.2em;
+    
+    &:first-child {
+        margin-left: 1em;
+    }
+    
+    &:first-child:before {
+        content: '';
+        width: 16px;
+        height: 12px;
+        background: url(images/tag.gif);
+        display: inline-block;
+        margin-bottom: -3px;
+        margin-right: 5px;
+    }
+}

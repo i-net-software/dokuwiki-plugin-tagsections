@@ -24,6 +24,7 @@
 //*/
                 return false;
             });
+            
         } else {
             jQuery('form.sectiontag__form').hide();
         }
@@ -120,7 +121,6 @@
         request({tags:newTags, saveTags:true}, function(){
             request({contentOfPage:true}, function(data){
     
-                console.log(data);
                 var $toRemove = $currentButton.parent().parent().children(),
                 $tmpWrap = jQuery('<div style="display:none"></div>').html(data);  // temporary wrapper
                 
