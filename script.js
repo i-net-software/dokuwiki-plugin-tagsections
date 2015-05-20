@@ -54,7 +54,7 @@
                 var check =     typeof data.tagsForSection != 'undefined' &&
                                 typeof data.tagsForSection[namespace] != 'undefined' &&
                                 typeof data.tagsForSection[namespace][tag] != 'undefined';
-                creeateCheckBox(namespace, tag, check).appendTo($accordeonContent)
+                creeateCheckBox(namespace, tag, check).appendTo($accordeonContent);
                 checked += check ? 1 : 0;
             });
             
