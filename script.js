@@ -68,7 +68,7 @@
         for(var i=0;typeof(elements[i])!='undefined';newTags.push(elements[i++].getAttribute('name')));
         console.log(newTags);
         
-        request({tags:newTags, saveTags:true}, function(){ getDialog('close') });
+        request({tags:newTags, saveTags:true}, function(){ getDialog('close'); window.location.reload(); });
     };
     
     var getDialog = function(action) {
