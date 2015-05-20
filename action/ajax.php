@@ -34,19 +34,26 @@ class action_plugin_tagsections_ajax extends DokuWiki_Action_Plugin {
 
     public function handle_ajax_call(Doku_Event &$event, $param) {
     
-        global $INPUT, $ID;
+        global $INPUT, $ID, $INFO, $ACT;
     
         if ( $event->data != 'tagsections' ) return false;
         
         if ((!$filter = $this->loadHelper('tagfilter'))) return false;
+        $event->preventDefault();
 
         $result = array();        
         $ID = getID();
         $range = $INPUT->str('range');
         $ns = $INPUT->str('ns');
 
+        if ( $INPUT->has('contentOfPage') ) {
+            $ACT = 'show';
+            $INFO = pageinfo();
+            return tpl_content();
+        }
+
         if ( $INPUT->has('saveTags') ) {
-            $this->__saveTags($ID, $INPUT->arr('tags'), $range);
+            return $this->__saveTags($INPUT->arr('tags'), $range);
         }
 
         if ( $INPUT->has('listOfPages') ) {
@@ -59,15 +66,15 @@ class action_plugin_tagsections_ajax extends DokuWiki_Action_Plugin {
         }
         
         if ( $INPUT->has('tagsForSection') ) {
-            $tagsForSection = $this->__getTagsForSection($filter, $ID, $range);
+            $tagsForSection = $this->__getTagsForSection($filter, $range);
             $result['tagsForSection'] = $this->__categorysizeTags($tagsForSection);
         }
         
-        $event->preventDefault();
         echo json_encode($result);
     }
     
-    private function __getTagsForSection($filter, $ID, $RANGE) {
+    private function __getTagsForSection($filter, $RANGE) {
+        global  $ID;
         
         if ($RANGE) {
             list($PRE,$TEXT,$SUF) = rawWikiSlices($RANGE,$ID);
@@ -121,7 +128,8 @@ class action_plugin_tagsections_ajax extends DokuWiki_Action_Plugin {
         // return html_buildlist($data,'idx','media_nstree_item','media_nstree_li');
     }
     
-    private function __saveTags($ID, $tags, $RANGE) {
+    private function __saveTags($tags, $RANGE) {
+        global $ID, $PRE, $TEXT, $SUF;
         
         list($PRE,$TEXT,$SUF) = rawWikiSlices($RANGE,$ID);
         
@@ -147,7 +155,7 @@ class action_plugin_tagsections_ajax extends DokuWiki_Action_Plugin {
         }
 
         //save it
-        saveWikiText($ID,con($PRE,$TEXT,$SUF,true),'Update tags using tagsections in range ' . $range); //use pretty mode for con
+        saveWikiText($ID,con($PRE,$TEXT,$SUF,true),'Update tags using tagsections in range ' . $range, true); //use pretty mode for con
         //unlock it
         unlock($ID);
     }

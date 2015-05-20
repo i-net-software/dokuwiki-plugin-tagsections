@@ -8,13 +8,13 @@
 (function() {
     
     var currentNamespace = JSINFO['namespace'];
-    var currentButton = null;
+    var $currentButton = null;
     var init = function() {
         
         if ( typeof tagadd__loadForm === 'function' ) {
             jQuery('form.sectiontag__form').submit(function(event){
                 
-                currentButton = jQuery(this).find('input.sectiontag_button');
+                $currentButton = jQuery(this);
                 request({availableTags: true, tagsForSection: true}, showTagSelection);
                 return false;
             });
@@ -57,7 +57,7 @@
         data['call'] = 'tagsections';
         data['id'] = JSINFO['id'];
         data['ns'] = currentNamespace;
-        data['range'] = currentButton.attr('range');
+        data['range'] = $currentButton.find('input.sectiontag_button').attr('range');
         return jQuery.post(DOKU_BASE + 'lib/exe/ajax.php', data, success);
     }
     
@@ -66,9 +66,31 @@
         var newTags = [];
         var elements = getDialog().find(".tagsections__accordeon input:checked").toArray();
         for(var i=0;typeof(elements[i])!='undefined';newTags.push(elements[i++].getAttribute('name')));
-        console.log(newTags);
         
-        request({tags:newTags, saveTags:true}, function(){ getDialog('close'); window.location.reload(); });
+        request({tags:newTags, saveTags:true}, function(){
+            request({contentOfPage:true}, function(data){
+    
+                console.log(data);
+                var $toRemove = $currentButton.parent().parent().children(),
+                $tmpWrap = jQuery('<div style="display:none"></div>').html(data);  // temporary wrapper
+                
+                // insert the section highlight wrapper before the last element added to $tmpStore
+                $toRemove.filter(':last').before($tmpWrap);
+                // and remove the elements
+                $toRemove.detach();
+                
+                // Now remove the content again
+                $tmpWrap.before($tmpWrap.children().detach());
+                // ...and remove the section highlight wrapper
+                $tmpWrap.detach();
+    
+                // Close Dialog.
+                getDialog('close');
+                // Re-Init the page for edit buttons.
+                dw_page.init();
+                init();
+            });
+        });
     };
     
     var getDialog = function(action) {
