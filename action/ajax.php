@@ -137,7 +137,7 @@ class action_plugin_tagsections_ajax extends DokuWiki_Action_Plugin {
         } else {
             
             $reg = '/([ \t]*={2,}[^\n]+={2,}[ \t]*(?=\n))/';
-            if ( preg_match($reg, $TEXT) ) {
+            if ( $this->getConf('tagsAfterHeading') == 1 && preg_match($reg, $TEXT) ) {
                 // Not yet there. At the beginning.
                 $TEXT = preg_replace($reg, "$1" . $newTags, $TEXT);
             } else {
@@ -145,7 +145,7 @@ class action_plugin_tagsections_ajax extends DokuWiki_Action_Plugin {
                 $TEXT .= $newTags;
             }
         }
-        
+
         //save it
         saveWikiText($ID,con($PRE,$TEXT,$SUF,true),'Update tags using tagsections in range ' . $range); //use pretty mode for con
         //unlock it
