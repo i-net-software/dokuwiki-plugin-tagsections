@@ -123,13 +123,28 @@ class action_plugin_tagsections_ajax extends DokuWiki_Action_Plugin {
     
     private function __saveTags($ID, $tags, $RANGE) {
         
-        if ( !is_array($tags) || empty($tags) ) return;
         list($PRE,$TEXT,$SUF) = rawWikiSlices($RANGE,$ID);
-        print con($PRE,$TEXT,$SUF,true);
         
-        // Put tags in TEXT
-        $newTags = '{{tag>' . implode(' ', $tags) . '}}';
-        $TEXT = preg_replace('/({{tag>.*?}})/', $newTags, $TEXT);
+        $newTags = '';
+        if ( is_array($tags) && !empty($tags) ) {
+            $newTags = "\n\n".'{{tag>' . implode(' ', $tags) . '}}';
+        }
+
+        $reg = '/([ \n\t]*{{tag>.*?}})/s';
+        if ( preg_match($reg, $TEXT) ) {
+            // Put tags in TEXT
+            $TEXT = preg_replace($reg, $newTags, $TEXT);
+        } else {
+            
+            $reg = '/([ \t]*={2,}[^\n]+={2,}[ \t]*(?=\n))/';
+            if ( preg_match($reg, $TEXT) ) {
+                // Not yet there. At the beginning.
+                $TEXT = preg_replace($reg, "$1" . $newTags, $TEXT);
+            } else {
+                // Not yet there. Add at the end.
+                $TEXT .= $newTags;
+            }
+        }
         
         //save it
         saveWikiText($ID,con($PRE,$TEXT,$SUF,true),'Update tags using tagsections in range ' . $range); //use pretty mode for con
