@@ -11,23 +11,18 @@
     var $currentButton = null;
     var init = function() {
         
-        if ( typeof tagadd__loadForm === 'function' ) {
-            jQuery('form.sectiontag__form').submit(function(event){
-                
-                $currentButton = jQuery(this);
-/*
-                request({listOfPages: true}, function(data) {
-                    console.log(JSON.parse(data));
-                });
-/*/  
-                request({availableTags: true, tagsForSection: true}, showTagSelection);
-//*/
-                return false;
-            });
+        jQuery('form.sectiontag__form').submit(function(event){
             
-        } else {
-            jQuery('form.sectiontag__form').hide();
-        }
+            $currentButton = jQuery(this);
+/*
+            request({listOfPages: true}, function(data) {
+                console.log(JSON.parse(data));
+            });
+/*/  
+            request({availableTags: true, tagsForSection: true}, showTagSelection);
+//*/
+            return false;
+        });
     };
     
     var showTagSelection = function(data) {
@@ -109,7 +104,7 @@
         data['id'] = JSINFO['id'];
         data['ns'] = currentNamespace;
         data['range'] = $currentButton.find('input.sectiontag_button').attr('range');
-        return jQuery.post(DOKU_BASE + 'lib/exe/ajax.php', data, success);
+        jQuery.post(DOKU_BASE + 'lib/exe/ajax.php', data, success);
     }
     
     var saveTags = function() {
