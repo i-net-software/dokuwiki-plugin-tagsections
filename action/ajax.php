@@ -38,7 +38,7 @@ class action_plugin_tagsections_ajax extends DokuWiki_Action_Plugin {
     
         if ( $event->data != 'tagsections' ) return false;
         
-        if ((!$filter = $this->loadHelper('tagfilter'))) return false;
+        if ((!$filter = $this->loadHelper('tagsections'))) return false;
         $event->preventDefault();
 
         $result = array();        
@@ -63,12 +63,12 @@ class action_plugin_tagsections_ajax extends DokuWiki_Action_Plugin {
         if ( $INPUT->has('availableTags') ) {
             // Lets just use all tags for now.
             $availableTags = $filter->getTagsByNamespace('');
-            $result['availableTags'] = $this->__categorysizeTags($availableTags);
+            $result['availableTags'] = $filter->categorysizeTags($availableTags);
         }
         
         if ( $INPUT->has('tagsForSection') ) {
             $tagsForSection = $this->__getTagsForSection($filter, $range);
-            $result['tagsForSection'] = $this->__categorysizeTags($tagsForSection);
+            $result['tagsForSection'] = $filter->categorysizeTags($tagsForSection);
         }
         
         echo json_encode($result);
@@ -159,37 +159,6 @@ class action_plugin_tagsections_ajax extends DokuWiki_Action_Plugin {
         saveWikiText($ID,con($PRE,$TEXT,$SUF,true),'Update tags using tagsections in range ' . $range, true); //use pretty mode for con
         //unlock it
         unlock($ID);
-    }
-    
-    /**
-     * Categorysize Tags by the first part before a ':'
-     * @param array $tags Array of tags
-     * <pre> 
-     * array('category1:tag1','category1:tag2','category2:tag1','category2:tag2')
-     * </pre>
-     * @returns array multidimensional array
-     * <pre> 
-     * [category1] => 'category1:tag1'
-     *             => 'category1:tag2'
-     * [category2] => 'category2:tag1'
-     *             => 'category2:tag2'
-     * </pre>
-     */
-    private function __categorysizeTags($tags)
-    {
-        $catTags = array();
-        if ( empty($tags) ) return array();
-        foreach($tags as $nsTag){
-            list($category, $tag) = explode(':', $nsTag, 2);
-            if ( empty($tag) ) {
-                $tag = $category;
-                $category = '';
-            }
-            
-            $catTags[$category][$tag]++;
-        }
-        ksort($catTags);
-        return $catTags;
     }
 }
 
