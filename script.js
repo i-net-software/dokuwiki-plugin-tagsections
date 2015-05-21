@@ -14,14 +14,23 @@
         jQuery('form.sectiontag__form').submit(function(event){
             
             $currentButton = jQuery(this);
-/*
-            request({listOfPages: true}, function(data) {
-                console.log(JSON.parse(data));
-            });
-/*/  
             request({availableTags: true, tagsForSection: true}, showTagSelection);
-//*/
             return false;
+
+        // Move the Tag button up to the header. Or close to it.
+        }).parent().css('margin-top', function(){
+            
+            var $tgt = jQuery(this),
+                nr = $tgt.attr('class').match(/(\s+|^)editbutton_(\d+)(\s+|$)/)[2],
+                $highlight = jQuery();
+            
+            // Walk the dom tree in reverse to find the sibling which is or contains the section edit marker
+            while($tgt.length > 0 && !($tgt.hasClass('sectionedit' + nr) || $tgt.find('.sectionedit' + nr).length)) {
+                $tgt = $tgt.prev();
+                $highlight = $highlight.add($tgt);
+            }
+            // insert the section highlight wrapper before the last element added to $highlight
+            return $tgt.offset().top - $highlight.filter(':last').offset().top;
         });
     };
     
