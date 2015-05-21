@@ -73,13 +73,13 @@
     
     var createHeader = function(namespace, checked, entries) {
         return jQuery('<h3/>').text(((namespace||LANG.plugins.tagsections['empty namespace']) + ' ' + checked + '/'+entries).trim() );
-    }
+    };
     
     var creeateCheckBox = function(namespace, tag, checked) {
         var tagName = (namespace||'').length > 0 ? namespace+':'+tag : tag;
         var $element = jQuery('<input type="checkbox" class="tagsections__tag"/>').attr('name', tagName).val('1').attr('id', tagName).prop('checked', checked);
         return jQuery('<label/>').attr('for', tagName).text(tag).append($element);
-    }
+    };
     
     var additionalRows = function(namespace, $root) {
         
@@ -97,15 +97,15 @@
 
             return false;
         });
-    }
+    };
     
     var request = function(data, success) {
         data['call'] = 'tagsections';
         data['id'] = JSINFO['id'];
         data['ns'] = currentNamespace;
         data['range'] = $currentButton.find('input.sectiontag_button').attr('range');
-        jQuery.post(DOKU_BASE + 'lib/exe/ajax.php', data, success);
-    }
+        return jQuery.post(DOKU_BASE + 'lib/exe/ajax.php', data, success);
+    };
     
     var saveTags = function() {
 
