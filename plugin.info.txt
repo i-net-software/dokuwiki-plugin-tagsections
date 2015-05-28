@@ -1,5 +1,5 @@
 base   tagsections
-author i-net software
+author i-net software / Gerry Weißbach
 email  tools@inetsoftware.de
 date   2015-05-21
 name   tagsections plugin
