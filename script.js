@@ -5,7 +5,7 @@
  * @author gamma
  */
 
-(function() {
+(function(jQuery) {
     
     var currentNamespace = JSINFO['namespace'];
     var $currentButton = null;
@@ -139,14 +139,23 @@
                 $tmpWrap.detach();
     
                 // Close Dialog.
-                getDialog('close');
+                getDialog('close').detach();
                 // Re-Init the page for edit buttons.
-                dw_page.init();
-                init();
+                initJQuery();
             });
         });
     };
     
+    var initJQuery = function() {
+        
+        jQuery('script[src]').each(function(){
+            var $xchange = jQuery(this);
+            var $new = jQuery('<script/>').attr('type', $xchange.attr('type')).attr('defer', 'true');
+            $xchange.before($new).detach();
+            $new.attr('src', $xchange.attr('src'));
+        });
+    };
+
     var getDialog = function(action) {
         
         if(!jQuery('#tagsections__dilaog').length){
@@ -170,4 +179,4 @@
     };    
    
     jQuery(document).ready(init);
-})();
+})(jQuery);
