@@ -30,7 +30,7 @@
                 $highlight = $highlight.add($tgt);
             }
             // insert the section highlight wrapper before the last element added to $highlight
-            return $tgt.offset().top - $highlight.filter(':last').offset().top;
+            return ($tgt.offset()||{top:0}).top - ($highlight.filter(':last').offset()||{top:0}).top;
         });
     };
     
