@@ -79,7 +79,11 @@ if ( class_exists('syntax_plugin_tag_tag') || 1==1 ) {
             $entries = explode(':', $entry);
             $list = array_unique(array_merge($entries, array($this->__clean($entry))));
             
-            return '<span class="tagsections header tag '.implode(' ', $list).'">'.array_pop($entries).'</span>';
+            if (!$my = $this->loadHelper('tag')) {
+                return '<span class="tagsections header tag '.implode(' ', $list).'">'.array_pop($entries).'</span>';
+            } else {
+                return '<span class="tagsections header tag '.implode(' ', $list).'">'.$my->tagLink($entry, array_pop($entries)).'</span>';
+            }
         }
     }
 }
