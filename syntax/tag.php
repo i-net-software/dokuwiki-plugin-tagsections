@@ -87,7 +87,7 @@ if ( class_exists('syntax_plugin_tag_tag') || 1==1 ) {
                 $format = $this->getConf('alternateLinkFormat');
                 if ( !empty($format) ) {
                     $format = str_replace(array( "{TAG}", "{NAME}", "{RAW}" ), array( urlencode(cleanID($entry)), urlencode(cleanID($name)), cleanID($entry) ), $format);
-                    $link = tpl_link($format, $name, 'rel="tag"', true);
+                    $link = tpl_link($format, $name, 'rel="tag" title="'.$entry.'"', true);
                 } else {
                     $link = $name;
                 }
