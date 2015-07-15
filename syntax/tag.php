@@ -79,10 +79,20 @@ if ( class_exists('syntax_plugin_tag_tag') || 1==1 ) {
             $entries = explode(':', $entry);
             $list = array_unique(array_merge($entries, array($this->__clean($entry))));
             
-            if (!$my = $this->loadHelper('tag')) {
-                return '<span class="tagsections header tag '.implode(' ', $list).'">'.array_pop($entries).'</span>';
-            } else {
+            if ( ($my = $this->loadHelper('tag')) && $this->getConf('useTagLinks')) {
                 return '<span class="tagsections header tag '.implode(' ', $list).'">'.$my->tagLink($entry, array_pop($entries)).'</span>';
+            } else {
+                
+                $name = array_pop($entries);
+                $format = $this->getConf('alternateLinkFormat');
+                if ( !empty($format) ) {
+                    $format = str_replace(array( "{TAG}", "{NAME}", "{RAW}" ), array( urlencode(cleanID($entry)), urlencode(cleanID($name)), cleanID($entry) ), $format);
+                    $link = tpl_link($format, $name, 'rel="tag"', true);
+                } else {
+                    $link = $name;
+                }
+                
+                return '<span class="tagsections header tag '.implode(' ', $list).'">'.$link.'</span>';
             }
         }
     }
