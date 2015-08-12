@@ -6,7 +6,7 @@ All documentation for this plugin can be found at
 http://github.com/inetsoftware/dokuwiki-plugin-tagsections
 
 If you install this plugin manually, make sure it is installed in
-lib/plugins/sectiontag/ - if the folder is called different it
+lib/plugins/tagsections/ - if the folder is called different it
 will not work!
 
 Please refer to http://www.dokuwiki.org/plugins for additional info
