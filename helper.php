@@ -18,16 +18,7 @@ require_once(DOKU_INC.'inc/indexer.php');
 class helper_plugin_tagsections extends DokuWiki_Plugin {
 	
 	protected $Htag;
-	/**
-	* Constructor gets default preferences and language strings
-	*/
-	function __construct() {
-		if (plugin_isdisabled('tag') || (!$this->Htag = plugin_load('helper', 'tag'))) {
-			msg('tag plugin is missing', -1);
-			return false;
-		}
-	}
-	
+
 	function getMethods() {
 		$result = array();
 		$result[] = array(

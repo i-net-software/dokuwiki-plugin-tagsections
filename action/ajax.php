@@ -13,6 +13,13 @@ class action_plugin_tagsections_ajax extends DokuWiki_Action_Plugin {
 
     private $inited = null;
 
+    function __construct() {
+		if (plugin_isdisabled('tag') || (!$this->Htag = plugin_load('helper', 'tag'))) {
+			msg('tag plugin is required by tagsections plugin, but missing', -1);
+			return false;
+		}
+	}
+
     /**
      * Registers a callback function for a given event
      *

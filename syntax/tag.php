@@ -17,13 +17,20 @@ if (!defined('DOKU_LF')) define('DOKU_LF', "\n");
 if (!defined('DOKU_TAB')) define('DOKU_TAB', "\t");
 if (!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN',DOKU_INC.'lib/plugins/');
 
-if ( class_exists('syntax_plugin_tag_tag') || 1==1 ) {
+if ( class_exists('syntax_plugin_tag_tag') ) {
 
     /**
      * Tag syntax plugin, allows to specify tags in a page
      */
     class syntax_plugin_tagsections_tag extends syntax_plugin_tag_tag {
     
+        function __construct() {
+    		if (plugin_isdisabled('tag') || (!$this->Htag = plugin_load('helper', 'tag'))) {
+    			msg('tag plugin is required by tagsections plugin, but missing', -1);
+    			return false;
+    		}
+    	}
+
         /**
          * @return string Syntax type
          */
