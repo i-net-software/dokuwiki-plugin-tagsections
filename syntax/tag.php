@@ -55,7 +55,7 @@ if ( class_exists('syntax_plugin_tag_tag') ) {
          * @param array          $data      The data from the handler function
          * @return bool If rendering was successful.
          */
-        function render($mode, &$renderer, $data) {
+        function render($mode, Doku_Renderer $renderer, $data) {
 
             if ($data === false) return false;
     
