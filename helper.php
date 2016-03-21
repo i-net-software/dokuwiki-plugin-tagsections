@@ -19,6 +19,13 @@ class helper_plugin_tagsections extends DokuWiki_Plugin {
 	
 	protected $Htag;
 
+    function __construct() {
+		if (plugin_isdisabled('tag') || (!$this->Htag = plugin_load('helper', 'tag'))) {
+			msg('tag plugin is required by tagsections plugin, but missing', -1);
+			return false;
+		}
+	}
+
 	function getMethods() {
 		$result = array();
 		$result[] = array(
@@ -104,9 +111,9 @@ class helper_plugin_tagsections extends DokuWiki_Plugin {
 			if($Htag->_isVisible($page,$ns)) {
 				if (!$acl_safe) return true;
 				$perm = auth_quickaclcheck($page);
-				if (!$perm < AUTH_READ)
+				if (!$perm < AUTH_READ) {
 					return true;
-			
+                }
 			}
 
 		}

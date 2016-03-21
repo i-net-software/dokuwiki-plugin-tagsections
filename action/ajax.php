@@ -13,13 +13,6 @@ class action_plugin_tagsections_ajax extends DokuWiki_Action_Plugin {
 
     private $inited = null;
 
-    function __construct() {
-		if (plugin_isdisabled('tag') || (!$this->Htag = plugin_load('helper', 'tag'))) {
-			msg('tag plugin is required by tagsections plugin, but missing', -1);
-			return false;
-		}
-	}
-
     /**
      * Registers a callback function for a given event
      *
@@ -67,12 +60,13 @@ class action_plugin_tagsections_ajax extends DokuWiki_Action_Plugin {
             $result['listOfPages'] = $this->__namespace_tree($ns);
         }
         
+        
         if ( $INPUT->has('availableTags') ) {
             // Lets just use all tags for now.
             $availableTags = $filter->getTagsByNamespace('');
             $result['availableTags'] = $filter->categorysizeTags($availableTags);
         }
-        
+
         if ( $INPUT->has('tagsForSection') ) {
             $tagsForSection = $this->__getTagsForSection($filter, $range);
             $result['tagsForSection'] = $filter->categorysizeTags($tagsForSection);
