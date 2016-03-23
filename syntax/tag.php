@@ -63,18 +63,22 @@ if ( class_exists('syntax_plugin_tag_tag') ) {
             if ($mode == 'xhtml') {
                 
                 // If we are directly after an opening Tag of a section level. This only applies if the option is enbaled.
-                $secLevelRegex = '/<h([1-9])(.*?)(>.*?)(<\/h\1>\s*?)(<div class=")(level\1)(">\s*?)$/s';
+                $secLevelRegex = '/<h([1-9])(.*?)(>.*?)(<\/h\1>\s*?)(<div class=")(level\1)(">\s*?)/s';
                 $matches = array();
-                if ( preg_match($secLevelRegex, $renderer->doc, $matches) ) {
-                    $tags = implode(' ', array_map(array($this, '__clean'), $data));
+                
+                if ( preg_match_all($secLevelRegex, $renderer->doc, $matches, PREG_SET_ORDER) ) {
+                    
+                    $matches = array_pop($matches);
+                    $tags = implode(' ', array_map(array($this, '__tags'), $data));
                     $tagList = implode('', array_map(array($this, '__tagList'), $data));
                     
                     $matches[2] = preg_replace("/(class=\")(.*?)/", "$1$tags $2", $matches[2]);
-                    $renderer->doc = preg_replace($secLevelRegex, "<h$1{$matches[2]}$3$tagList$4$5$tags $6$7", $renderer->doc);
+                    $renderer->doc = str_replace($matches[0], "<h{$matches[1]}{$matches[2]}{$matches[3]}$tagList{$matches[4]}{$matches[5]}$tags {$matches[6]}{$matches[7]}", $renderer->doc);
                     
                     return true;
                 }
             }
+            
             return parent::render($mode, $renderer, $data);
         }
         
@@ -82,7 +86,13 @@ if ( class_exists('syntax_plugin_tag_tag') ) {
             return cleanID(str_replace(':', '_', $entry));
         }
         
+        function __tags($entry) {
+            $entries = explode(':', $entry);
+            return implode(' ', array_unique(array_merge($entries, array($this->__clean($entry)))));
+        }
+        
         function __tagList($entry) {
+            
             $entries = explode(':', $entry);
             $list = array_unique(array_merge($entries, array($this->__clean($entry))));
             
