@@ -25,11 +25,11 @@ if ( class_exists('syntax_plugin_tag_tag') ) {
     class syntax_plugin_tagsections_tag extends syntax_plugin_tag_tag {
     
         function __construct() {
-    		if (plugin_isdisabled('tag') || (!$this->Htag = plugin_load('helper', 'tag'))) {
-    			msg('tag plugin is required by tagsections plugin, but missing', -1);
-    			return false;
-    		}
-    	}
+            if (plugin_isdisabled('tag') || (!$this->Htag = plugin_load('helper', 'tag'))) {
+                msg('tag plugin is required by tagsections plugin, but missing', -1);
+                return false;
+            }
+        }
 
         /**
          * @return string Syntax type
