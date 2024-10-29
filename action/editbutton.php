@@ -51,8 +51,8 @@ class action_plugin_tagsections_editbutton extends DokuWiki_Action_Plugin {
     }
 
     private function init() {
-        
-        if ( is_null( $inited ) ) {
+
+        if ( is_null( $this->inited ) ) {
             $this->inited = (plugin_load('action', 'tag' ) != null);
         }
 
