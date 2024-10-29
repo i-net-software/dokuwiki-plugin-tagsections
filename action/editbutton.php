@@ -38,12 +38,12 @@ class action_plugin_tagsections_editbutton extends DokuWiki_Action_Plugin {
         if ( !$this->init() ) {
             return;
         }
-        
+
         // Check for correct section
         if ( $event->data['target'] != 'section' ) {
             return;
         }
-        
+
         // Add form for tags
         $form = new Doku_Form(array('class' => 'sectiontag__form btn_secedit'));
         $form->addElement(form_makeButton('submit', 'sectiontag', 'add tag', array( 'range' => $event->data['range'], 'class' => 'sectiontag_button' ) ));
@@ -55,7 +55,7 @@ class action_plugin_tagsections_editbutton extends DokuWiki_Action_Plugin {
         if ( is_null( $inited ) ) {
             $this->inited = (plugin_load('action', 'tag' ) != null);
         }
-        
+
         return $this->inited;
     }
 }
