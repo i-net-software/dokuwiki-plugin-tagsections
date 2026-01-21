@@ -1,0 +1,73 @@
+div.sectiontag {
+    position: absolute;
+    left: 0px;
+    
+    .sectiontag__form {
+        
+        left: 100%;
+        margin-left: -150%;
+        
+        .sectiontag_button {
+            text-indent: -999px;
+            border: 0px;
+            
+            background-color: transparent;
+            background-image: url(images/sectiontag.png);
+            width: 20px;
+            height: 20px;
+            
+            &:hover, &:active {
+                background-color: @ini_highlight;
+            }
+        }        
+    }
+}
+
+div.tagsections__accordeon {
+
+    label {
+        float: right;
+        display: inline-block;
+        width: 100%;
+        padding: 0px 5px;
+        
+        &:after {
+            display: inline-block;
+            content: '';
+            clear: both;
+        }
+        
+        &:hover {
+            background-color: @ini_highlight;
+        }
+    }
+    
+    input[type='checkbox'] {
+        margin: 5px;
+        float: left;
+    }
+    
+    input.tagsections__tag__new {
+        margin: 0px 10px;
+    }
+}
+
+.tagsections.header.tag {
+    font-size: small;
+    font-weight: normal;
+    margin: 0px 0.2em;
+    
+    &:first-child {
+        margin-left: 1em;
+    }
+    
+    &:first-child:before {
+        content: '';
+        width: 16px;
+        height: 12px;
+        background: url(images/tag.gif);
+        display: inline-block;
+        margin-bottom: -3px;
+        margin-right: 5px;
+    }
+}
