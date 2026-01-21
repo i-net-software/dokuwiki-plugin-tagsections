@@ -1,7 +1,7 @@
 base   tagsections
 author i-net software / Gerry Weißbach
 email  tools@inetsoftware.de
-date   2020-04-21
+date   2026-01-21
 name   tagsections plugin
 desc   Add tags to sections using the taggadd gui
 url    http://github.com/inetsoftware/dokuwiki-plugin-tagsections
