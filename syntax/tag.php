@@ -23,6 +23,9 @@ if ( class_exists('syntax_plugin_tag_tag') ) {
      * Tag syntax plugin, allows to specify tags in a page
      */
     class syntax_plugin_tagsections_tag extends syntax_plugin_tag_tag {
+
+        /** @var helper_plugin_tag */
+        protected $Htag;
     
         function __construct() {
             if (plugin_isdisabled('tag') || (!$this->Htag = plugin_load('helper', 'tag'))) {
@@ -46,6 +49,36 @@ if ( class_exists('syntax_plugin_tag_tag') ) {
         function connectTo($mode) {
             $this->Lexer->addSpecialPattern('\{\{tag>.*?\}\}', $mode, 'plugin_tagsections_tag');
         }
+
+        /**
+         * Parse tags and remember whether they belong to the page heading.
+         *
+         * A tag controls the whole page only when it follows the first heading
+         * and that heading is an H1. All other tags belong to their section.
+         *
+         * @param string       $match   Matched syntax
+         * @param int          $state   Lexer state
+         * @param int          $pos     Byte position in the source
+         * @param Doku_Handler $handler Parser handler
+         * @return array|false Data for the renderer
+         */
+        function handle($match, $state, $pos, Doku_Handler $handler) {
+            $tags = parent::handle($match, $state, $pos, $handler);
+            if ($tags === false) return false;
+
+            $headingCount = 0;
+            $lastHeadingLevel = null;
+            foreach ($handler->calls as $call) {
+                if ($call[0] !== 'header') continue;
+                $headingCount++;
+                $lastHeadingLevel = $call[1][1];
+            }
+
+            return array(
+                'tags' => $tags,
+                'pageTag' => $headingCount === 1 && $lastHeadingLevel === 1,
+            );
+        }
     
         /**
          * Render xhtml output or metadata
@@ -58,6 +91,11 @@ if ( class_exists('syntax_plugin_tag_tag') ) {
         function render($mode, Doku_Renderer $renderer, $data) {
 
             if ($data === false) return false;
+
+            // Keep compatibility with parser instructions cached before this
+            // plugin started recording the heading association.
+            $pageTag = isset($data['pageTag']) && $data['pageTag'] === true;
+            $tags = isset($data['tags']) ? $data['tags'] : $data;
     
             // XHTML output
             if ($mode == 'xhtml') {
@@ -69,10 +107,10 @@ if ( class_exists('syntax_plugin_tag_tag') ) {
                 if ( preg_match_all($secLevelRegex, $renderer->doc, $matches, PREG_SET_ORDER) ) {
                     
                     $matches = array_pop($matches);
-                    $levelTags = $tags = implode(' ', array_map(array($this, '__tags'), $data));
-                    $tagList = implode('', array_map(array($this, '__tagList'), $data));
+                    $levelTags = $tagClasses = implode(' ', array_map(array($this, '__tags'), $tags));
+                    $tagList = implode('', array_map(array($this, '__tagList'), $tags));
                     
-                    $matches[2] = preg_replace("/(class=\")(.*?)/", "$1$tags $2", $matches[2]);
+                    $matches[2] = preg_replace("/(class=\")(.*?)/", "$1$tagClasses $2", $matches[2]);
                     
                     if ( !$this->getConf('addTagsToSectionElements') ) {
                         $levelTags = '';    
@@ -83,8 +121,34 @@ if ( class_exists('syntax_plugin_tag_tag') ) {
                     return true;
                 }
             }
+
+            if ($mode == 'metadata') {
+                $rendered = parent::render($mode, $renderer, $tags);
+                if (!$rendered) return false;
+
+                $cleanTags = array_map('cleanID', $tags);
+                if (!isset($renderer->meta['tagsections']['all_tags'])) {
+                    $renderer->meta['tagsections']['all_tags'] = array();
+                }
+                $renderer->meta['tagsections']['all_tags'] = array_values(array_unique(array_merge(
+                    $renderer->meta['tagsections']['all_tags'],
+                    $cleanTags
+                )));
+
+                if ($pageTag) {
+                    if (!isset($renderer->meta['tagsections']['page_tags'])) {
+                        $renderer->meta['tagsections']['page_tags'] = array();
+                    }
+                    $renderer->meta['tagsections']['page_tags'] = array_values(array_unique(array_merge(
+                        $renderer->meta['tagsections']['page_tags'],
+                        $cleanTags
+                    )));
+                }
+
+                return true;
+            }
             
-            return parent::render($mode, $renderer, $data);
+            return parent::render($mode, $renderer, $tags);
         }
         
         function __clean($entry) {
